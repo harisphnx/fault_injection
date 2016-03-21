@@ -11,9 +11,6 @@
 
 #include "flag_struct.h"
 
-#define ORIG_RAX 15
-#define SYSCALL_MAXARGS 6
-#define RDI 14
 
 int main(int argc, char* argv[])
 {
@@ -37,7 +34,6 @@ int main(int argc, char* argv[])
             case('f'):
                 for (p = strtok(argv[++i], ","); p != NULL; p = strtok(NULL, ","))
                     for(x = 0; x < sizeof(syscall_flag)/sizeof(syscall_flag[0]); x++)
-                        //printf("%d  %s  %d\n", x, syscall_flag[x].sys_call, syscall_flag[x].flag);
                         if(!strcmp(syscall_flag[x].sys_call, p))
                             syscall_flag[x].flag = 1;
                 break;
@@ -99,7 +95,7 @@ int main(int argc, char* argv[])
                     else
                     {
                         printf("exiting\n");
-                        printf("original return %ld\n", regs.rax);
+                        printf("original return %lld\n", regs.rax);
 
                         regs.rax = -1;
                         ptrace(PTRACE_SETREGS, proc, NULL, &regs);
@@ -122,5 +118,5 @@ int main(int argc, char* argv[])
             execute_syscall = 1;
         ptrace(PTRACE_SYSCALL, proc, NULL, NULL);
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
