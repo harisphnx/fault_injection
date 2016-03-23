@@ -15,8 +15,8 @@
 int main(int argc, char* argv[])
 {
     //**********declarations and memory allocations**********//
-    long sys_call_number, temp_long;
-    int status, i, j, x, in_syscall = 0, execute_syscall = 1;
+    long sys_call_number;
+    int status, i, x, in_syscall = 0, execute_syscall = 1;
 
     struct user_regs_struct regs;
 
@@ -83,14 +83,9 @@ int main(int argc, char* argv[])
                     if(in_syscall == 0)
                     {
                         printf("entering\n");
-                        temp_long = 0;
-                        ptrace(PTRACE_POKEDATA, proc, regs.rdi , &temp_long);
-                        j = 0;
-                        while( j < (regs.rdx/8) )
-                        {
-                            ptrace(PTRACE_POKEDATA, proc, regs.rsi + (j * sizeof(long)) , &temp_long);
-                            ++j;
-                        }
+
+                        regs.rax = -1;
+                        ptrace(PTRACE_SETREGS, proc, NULL, &regs);
                     }
                     else
                     {
@@ -100,17 +95,6 @@ int main(int argc, char* argv[])
                         regs.rax = -1;
                         ptrace(PTRACE_SETREGS, proc, NULL, &regs);
                     }
-                    break;
-                case 1:
-                        temp_long = 0;
-                        ptrace(PTRACE_POKEDATA, proc, regs.rdi , &temp_long);
-                        j = 0;
-                        while( j < (regs.rdx/8) )
-                        {
-                            ptrace(PTRACE_POKEDATA, proc, regs.rsi + (j*8) , &temp_long);
-                            ++j;
-                        }
-                    break;
             }
         }
         in_syscall ^= 1;
