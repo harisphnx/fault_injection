@@ -76,25 +76,21 @@ int main(int argc, char* argv[])
 
         if(syscall_flag[sys_call_number].flag == 1 && execute_syscall == 1)
         {
-            switch(sys_call_number)
+            if(in_syscall == 0)
             {
-                case 0:
-                    printf("%s  %d\n", syscall_flag[sys_call_number].sys_call, syscall_flag[sys_call_number].flag);
-                    if(in_syscall == 0)
-                    {
-                        printf("entering\n");
+                printf("System call %s() failed\n", syscall_flag[sys_call_number].sys_call);
+                printf("entering\n");
 
-                        regs.rax = -1;
-                        ptrace(PTRACE_SETREGS, proc, NULL, &regs);
-                    }
-                    else
-                    {
-                        printf("exiting\n");
-                        printf("original return %lld\n", regs.rax);
+                regs.rax = -1;
+                ptrace(PTRACE_SETREGS, proc, NULL, &regs);
+            }
+            else
+            {
+                printf("exiting\n");
+                printf("original return %lld\n", regs.rax);
 
-                        regs.rax = -1;
-                        ptrace(PTRACE_SETREGS, proc, NULL, &regs);
-                    }
+                regs.rax = -1;
+                ptrace(PTRACE_SETREGS, proc, NULL, &regs);
             }
         }
         in_syscall ^= 1;

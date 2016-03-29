@@ -1,7 +1,7 @@
 struct flag_struct
 {
     char* sys_call;
-    int flag;
+    short flag;
 };
 
 struct flag_struct syscall_flag[] = {
